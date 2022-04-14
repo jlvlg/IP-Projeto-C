@@ -12,7 +12,6 @@ typedef struct
 {
     char titulo[50];
     int id, ano, id_artista, duracao;
-    char **generos;
 } Album;
 
 typedef struct
@@ -55,8 +54,6 @@ RepMusica construtor_rep();
 void registrar_artista(Artista artista, RepMusica *rep);
 int registrar_album(Album album, RepMusica *rep);
 int registrar_musica(Musica musica, RepMusica *rep);
-void adicionar_generos(Musica musica, RepMusica *rep);
-void remover_generos(Musica musica, RepMusica *rep);
 int buscar_artista(int id, RepMusica *rep);
 int buscar_album(int id, RepMusica *rep);
 int buscar_musica(int id, RepMusica *rep);
@@ -85,8 +82,6 @@ Album construtor_album(char *titulo, int ano, int id, int id_artista)
     
     strcpy(temp.titulo, titulo);
     temp.ano = ano;
-    
-    temp.generos = (char**)malloc(sizeof(char*));
 
     temp.id = id;
     temp.id_artista = id_artista;
@@ -163,38 +158,8 @@ int registrar_musica(Musica musica, RepMusica *rep)
     rep->musicas.index++;
 
     rep->albuns.albuns[album_index].duracao += musica.duracao;
-    adicionar_generos(musica, rep);
     return rep->musicas.index - 1;
 }
-
-// void adicionar_generos(Musica musica, RepMusica *rep){
-//     int indexAlbum = buscar_album(musica.id_album, rep);
-//     Album album = rep->albuns.albuns[indexAlbum];
-//     if(strstr(album.generos, musica.genero) == NULL){
-//         int size = ((sizeof(musica.genero)+sizeof(album.generos))/sizeof(char))+3;
-//         rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
-//         strcat(rep->albuns.albuns[indexAlbum].generos, " / ");
-//         strcat(rep->albuns.albuns[indexAlbum].generos, musica.genero);
-//     }
-// }
-
-// void remover_generos(Musica musica, RepMusica *rep){
-//     int i, indexAlbum = buscar_album(musica.id_album, rep);
-//     Album album = rep->albuns.albuns[indexAlbum];
-//     char *strgenero = strstr(album.generos, musica.genero);
-//     if(strgenero != NULL){
-//         int tprefix = 0;
-//         if(strgenero[-2] == '/'){
-//             tprefix = 3;
-//         }
-//         for (i =-tprefix; i < strlen(musica.genero); i++)
-//         {
-//             rep->albuns.albuns[indexAlbum].generos[i] = rep->albuns.albuns[indexAlbum].generos[i + strlen(musica.genero) + tprefix];
-//         }
-//         int size = (-(sizeof(musica.genero)+sizeof(album.generos))/sizeof(char))-tprefix;
-//         rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
-//     }
-// }
 
 int buscar_artista(int id, RepMusica *rep)
 {
@@ -300,7 +265,6 @@ int remover_musica(int id, RepMusica *rep){
         return 0;
     }
     rep->albuns.albuns[album_index].duracao -= rep->musicas.musicas[index].duracao;
-    remover_generos(rep->musicas.musicas[index], rep);
     for(i=index; i<rep->musicas.index-1; i++){
         rep->musicas.musicas[i] = rep->musicas.musicas[i+1];
     }
@@ -325,8 +289,8 @@ int main()
     registrar_artista(construtor_artista("JOAO", 0), &repositorio);
     registrar_artista(construtor_artista("JESSIKA", 0), &repositorio);
 
-    registrar_album(construtor_album("BALADONA FODA", 2009, "", 0, 1), &repositorio);
-    registrar_album(construtor_album("FESTA JUNINA", 2009, "", 0, 1), &repositorio);
+    registrar_album(construtor_album("BALADONA FODA", 2009, 0, 1), &repositorio);
+    registrar_album(construtor_album("FESTA JUNINA", 2009, 0, 1), &repositorio);
 
     registrar_musica(construtor_musica("CHORAR D:", "ROCK", 0, 1, 230, 1), &repositorio);
     registrar_musica(construtor_musica("OwO", "ROCK", 0, 1, 230, 2), &repositorio);
@@ -342,8 +306,6 @@ int main()
     printf("%d\n", repositorio.albuns.albuns[1].ano);
     printf("%d\n", repositorio.albuns.albuns[0].duracao);
     printf("%d\n", repositorio.albuns.albuns[1].duracao);
-    printf("%s\n", repositorio.albuns.albuns[0].generos);
-    printf("%s\n", repositorio.albuns.albuns[1].generos);
     printf("%s\n", repositorio.albuns.albuns[0].titulo);
     printf("%s\n", repositorio.albuns.albuns[1].titulo);
 
