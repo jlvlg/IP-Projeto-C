@@ -12,7 +12,7 @@ typedef struct
 {
     char titulo[50];
     int id, ano, id_artista, duracao;
-    char *generos;
+    char **generos;
 } Album;
 
 typedef struct
@@ -47,14 +47,16 @@ typedef struct
     Musicas musicas;
 } RepMusica;
 
+void clear();
 Artista construtor_artista(char *nome, int id);
-Album construtor_album(char *titulo, int ano, char *generos, int id, int id_artista);
+Album construtor_album(char *titulo, int ano, int id, int id_artista);
 Musica construtor_musica(char *titulo, char *genero, int id, int id_album, int duracao, int faixa);
 RepMusica construtor_rep();
 void registrar_artista(Artista artista, RepMusica *rep);
 int registrar_album(Album album, RepMusica *rep);
 int registrar_musica(Musica musica, RepMusica *rep);
 void adicionar_generos(Musica musica, RepMusica *rep);
+void remover_generos(Musica musica, RepMusica *rep);
 int buscar_artista(int id, RepMusica *rep);
 int buscar_album(int id, RepMusica *rep);
 int buscar_musica(int id, RepMusica *rep);
@@ -65,6 +67,10 @@ int remover_artista(int id, RepMusica *rep);
 int remover_album(int id, RepMusica *rep);
 int remover_musica(int id, RepMusica *rep);
 
+void clear() {
+    system("cls||clear");
+}
+
 Artista construtor_artista(char *nome, int id)
 {
     Artista temp;
@@ -73,16 +79,15 @@ Artista construtor_artista(char *nome, int id)
     return temp;
 }
 
-Album construtor_album(char *titulo, int ano, char *generos, int id, int id_artista)
+Album construtor_album(char *titulo, int ano, int id, int id_artista)
 {
     Album temp;
     
     strcpy(temp.titulo, titulo);
     temp.ano = ano;
     
-    temp.generos = (char*)malloc(strlen(generos) + 1);
+    temp.generos = (char**)malloc(sizeof(char*));
 
-    strcpy(temp.generos, generos);
     temp.id = id;
     temp.id_artista = id_artista;
     temp.duracao = 0;
@@ -162,28 +167,34 @@ int registrar_musica(Musica musica, RepMusica *rep)
     return rep->musicas.index - 1;
 }
 
-void adicionar_generos(Musica musica, RepMusica *rep){
-    int indexAlbum = buscar_album(musica.id_album, rep);
-    Album album = rep->albuns.albuns[indexAlbum];
-    if(strstr(album.generos, musica.genero) == NULL){
-        int size = ((sizeof(musica.genero)+sizeof(album.generos))/sizeof(char))+3;
-        rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
-        strcat(rep->albuns.albuns[indexAlbum].generos, " / ");
-        strcat(rep->albuns.albuns[indexAlbum].generos, musica.genero);
-    }
-}
+// void adicionar_generos(Musica musica, RepMusica *rep){
+//     int indexAlbum = buscar_album(musica.id_album, rep);
+//     Album album = rep->albuns.albuns[indexAlbum];
+//     if(strstr(album.generos, musica.genero) == NULL){
+//         int size = ((sizeof(musica.genero)+sizeof(album.generos))/sizeof(char))+3;
+//         rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
+//         strcat(rep->albuns.albuns[indexAlbum].generos, " / ");
+//         strcat(rep->albuns.albuns[indexAlbum].generos, musica.genero);
+//     }
+// }
 
-void remover_generos(Musica musica, RepMusica *rep){
-    int indexAlbum = buscar_album(musica.id_album, rep);
-    Album album = rep->albuns.albuns[indexAlbum];
-    if(strstr(album.generos, musica.genero) != NULL){
-        int size = (-(sizeof(musica.genero)+sizeof(album.generos))/sizeof(char))+3;
-        strcat(rep->albuns.albuns[indexAlbum].generos, " / ");
-        strcat(rep->albuns.albuns[indexAlbum].generos, musica.genero);
-        rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
-        
-    }
-}
+// void remover_generos(Musica musica, RepMusica *rep){
+//     int i, indexAlbum = buscar_album(musica.id_album, rep);
+//     Album album = rep->albuns.albuns[indexAlbum];
+//     char *strgenero = strstr(album.generos, musica.genero);
+//     if(strgenero != NULL){
+//         int tprefix = 0;
+//         if(strgenero[-2] == '/'){
+//             tprefix = 3;
+//         }
+//         for (i =-tprefix; i < strlen(musica.genero); i++)
+//         {
+//             rep->albuns.albuns[indexAlbum].generos[i] = rep->albuns.albuns[indexAlbum].generos[i + strlen(musica.genero) + tprefix];
+//         }
+//         int size = (-(sizeof(musica.genero)+sizeof(album.generos))/sizeof(char))-tprefix;
+//         rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
+//     }
+// }
 
 int buscar_artista(int id, RepMusica *rep)
 {
@@ -270,7 +281,7 @@ int remover_artista(int id, RepMusica *rep) {
 }
 
 int remover_album(int id, RepMusica *rep) {
-    int i, index = buscar_artista(id, rep);
+    int i, index = buscar_album(id, rep);
     if (index == -1) {
         return 0;
     }
@@ -282,18 +293,6 @@ int remover_album(int id, RepMusica *rep) {
     return 1;
 }
 
-int remover_album(int id, RepMusica *rep){
-    int i, index = buscar_album(id, rep);
-    if(index == -1) {
-        return 0;
-    }
-    for(i=index; i<rep->albuns.index-1; i++){
-        rep->albuns.albuns[i] = rep->albuns.albuns[i+1];
-    }
-    rep->albuns.index--;
-    rep->albuns.albuns = (Albuns*) realloc(rep->albuns.albuns, rep->albuns.index * sizeof(Albuns));
-}
-
 int remover_musica(int id, RepMusica *rep){
     int i, index = buscar_musica(id, rep);
     int album_index = buscar_album(rep->musicas.musicas[index].id_album, rep);
@@ -301,27 +300,40 @@ int remover_musica(int id, RepMusica *rep){
         return 0;
     }
     rep->albuns.albuns[album_index].duracao -= rep->musicas.musicas[index].duracao;
+    remover_generos(rep->musicas.musicas[index], rep);
     for(i=index; i<rep->musicas.index-1; i++){
         rep->musicas.musicas[i] = rep->musicas.musicas[i+1];
     }
     rep->musicas.index--;
     rep->musicas.musicas = (Musica*) realloc(rep->musicas.musicas, rep->musicas.index * sizeof(Musica));
+    return 1;
+}
+
+void print_menu(char **menu) {
+    int i;
+    for (i = 0; i < sizeof(menu)/sizeof(menu[0]); i++) {
+        printf("%s\n", menu[i]);
+    }
 }
 
 int main()
 {
     RepMusica repositorio = construtor_rep();
+    // char menus[][] = {"1. Gerenciar artistas", "2. Gerenciar albuns", "3. Gerenciar musicas"};
+    
 
     registrar_artista(construtor_artista("JOAO", 0), &repositorio);
     registrar_artista(construtor_artista("JESSIKA", 0), &repositorio);
 
-    registrar_album(construtor_album("BALADONA FODA", 2009, "SAMBA / PAGODE", 0, 1), &repositorio);
-    registrar_album(construtor_album("FESTA JUNINA", 2009, "FUNK / HEAVY-METAL", 0, 1), &repositorio);
+    registrar_album(construtor_album("BALADONA FODA", 2009, "", 0, 1), &repositorio);
+    registrar_album(construtor_album("FESTA JUNINA", 2009, "", 0, 1), &repositorio);
 
     registrar_musica(construtor_musica("CHORAR D:", "ROCK", 0, 1, 230, 1), &repositorio);
     registrar_musica(construtor_musica("OwO", "ROCK", 0, 1, 230, 2), &repositorio);
     registrar_musica(construtor_musica("EEE", "ASDA", 0, 2, 230, 1), &repositorio);
     registrar_musica(construtor_musica(":O", "LOLOLOL", 0, 2, 230, 2), &repositorio);
+
+    remover_musica(1, &repositorio);
 
     printf("%s\n", repositorio.artistas.artistas[0].nome);
     printf("%s\n", repositorio.artistas.artistas[1].nome);
@@ -335,12 +347,12 @@ int main()
     printf("%s\n", repositorio.albuns.albuns[0].titulo);
     printf("%s\n", repositorio.albuns.albuns[1].titulo);
 
-    printf("%d\n", repositorio.musicas.musicas[0].duracao);
+    // printf("%d\n", repositorio.musicas.musicas[0].duracao);
     printf("%d\n", repositorio.musicas.musicas[1].duracao);
-    printf("%d\n", repositorio.musicas.musicas[0].faixa);
+    // printf("%d\n", repositorio.musicas.musicas[0].faixa);
     printf("%d\n", repositorio.musicas.musicas[1].faixa);
-    printf("%s\n", repositorio.musicas.musicas[0].genero);
+    // printf("%s\n", repositorio.musicas.musicas[0].genero);
     printf("%s\n", repositorio.musicas.musicas[1].genero);
-    printf("%s\n", repositorio.musicas.musicas[0].titulo);
+    // printf("%s\n", repositorio.musicas.musicas[0].titulo);
     printf("%s\n", repositorio.musicas.musicas[1].titulo);
 }
