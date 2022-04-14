@@ -61,6 +61,9 @@ int buscar_musica(int id, RepMusica *rep);
 int atualizar_artista(Artista artista, RepMusica *rep);
 int atualizar_album(Album album, RepMusica *rep);
 int atualizar_musica(Musica musica, RepMusica *rep);
+int remover_artista(int id, RepMusica *rep);
+int remover_album(int id, RepMusica *rep);
+int remover_musica(int id, RepMusica *rep);
 
 Artista construtor_artista(char *nome, int id)
 {
@@ -126,7 +129,9 @@ void registrar_artista(Artista artista, RepMusica *rep)
 int registrar_album(Album album, RepMusica *rep)
 {
     int artista_index = buscar_artista(album.id_artista, rep);
-    if (artista_index == -1) return -1;
+    if (artista_index == -1) {
+        return artista_index;
+    }
     rep->albuns.albuns = (Album *)realloc(rep->albuns.albuns, (rep->albuns.index + 1) * sizeof(Album));
 
     album.id = rep->albuns.next_id;
@@ -141,7 +146,9 @@ int registrar_album(Album album, RepMusica *rep)
 int registrar_musica(Musica musica, RepMusica *rep)
 {
     int album_index = buscar_album(musica.id_album, rep);
-    if (album_index == -1) return -1;
+    if (album_index == -1) {
+        return album_index;
+    }
     rep->musicas.musicas = (Musica *)realloc(rep->musicas.musicas, (rep->musicas.index + 1) * sizeof(Musica));
 
     musica.id = rep->musicas.next_id;
@@ -163,6 +170,18 @@ void adicionar_generos(Musica musica, RepMusica *rep){
         rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
         strcat(rep->albuns.albuns[indexAlbum].generos, " / ");
         strcat(rep->albuns.albuns[indexAlbum].generos, musica.genero);
+    }
+}
+
+void remover_generos(Musica musica, RepMusica *rep){
+    int indexAlbum = buscar_album(musica.id_album, rep);
+    Album album = rep->albuns.albuns[indexAlbum];
+    if(strstr(album.generos, musica.genero) != NULL){
+        int size = (-(sizeof(musica.genero)+sizeof(album.generos))/sizeof(char))+3;
+        strcat(rep->albuns.albuns[indexAlbum].generos, " / ");
+        strcat(rep->albuns.albuns[indexAlbum].generos, musica.genero);
+        rep->albuns.albuns[indexAlbum].generos = (char*) realloc(rep->albuns.albuns[indexAlbum].generos, size);
+        
     }
 }
 
@@ -210,23 +229,83 @@ int buscar_musica(int id, RepMusica *rep)
 
 int atualizar_artista(Artista artista, RepMusica *rep) {
     int index = buscar_artista(artista.id, rep);
-    if (index == -1) return 0;
+    if (index == -1) {
+        return 0;
+    }
     rep->artistas.artistas[index] = artista;
     return 1;
 }
 
 int atualizar_album(Album album, RepMusica *rep){
     int index = buscar_album(album.id, rep);
-    if(index != -1) return 0;
+    if(index == -1) {
+        return 0;
+    }
     rep->albuns.albuns[index] = album;
     return 1;
 }
 
 int atualizar_musica(Musica musica, RepMusica *rep){
-    int index = buscar_musica(musica.id, rep);
-    if(index != -1) return 0;
+    int index = buscar_musica(musica.id, rep), album_index = buscar_album(musica.id_album, rep);
+    if(index == -1) {
+        return 0;
+    }
+    rep->albuns.albuns[album_index].duracao += musica.duracao - rep->musicas.musicas[index].duracao;
     rep->musicas.musicas[index] = musica;
+
     return 1;
+}
+
+int remover_artista(int id, RepMusica *rep) {
+    int i, index = buscar_artista(id, rep);
+    if (index == -1) {
+        return 0;
+    }
+    for (i = index; i < rep->artistas.index-1; i++) {
+        rep->artistas.artistas[i] = rep->artistas.artistas[i+1];
+    }
+    rep->artistas.index--;
+    rep->artistas.artistas = (Artista*) realloc(rep->artistas.artistas, rep->artistas.index * sizeof(Artista));
+    return 1;
+}
+
+int remover_album(int id, RepMusica *rep) {
+    int i, index = buscar_artista(id, rep);
+    if (index == -1) {
+        return 0;
+    }
+    for (i = index; i < rep->albuns.index-1; i++) {
+        rep->albuns.albuns[i] = rep->albuns.albuns[i+1];
+    }
+    rep->albuns.index--;
+    rep->albuns.albuns = (Album*) realloc(rep->albuns.albuns, rep->albuns.index * sizeof(Album));
+    return 1;
+}
+
+int remover_album(int id, RepMusica *rep){
+    int i, index = buscar_album(id, rep);
+    if(index == -1) {
+        return 0;
+    }
+    for(i=index; i<rep->albuns.index-1; i++){
+        rep->albuns.albuns[i] = rep->albuns.albuns[i+1];
+    }
+    rep->albuns.index--;
+    rep->albuns.albuns = (Albuns*) realloc(rep->albuns.albuns, rep->albuns.index * sizeof(Albuns));
+}
+
+int remover_musica(int id, RepMusica *rep){
+    int i, index = buscar_musica(id, rep);
+    int album_index = buscar_album(rep->musicas.musicas[index].id_album, rep);
+    if(index == -1) {
+        return 0;
+    }
+    rep->albuns.albuns[album_index].duracao -= rep->musicas.musicas[index].duracao;
+    for(i=index; i<rep->musicas.index-1; i++){
+        rep->musicas.musicas[i] = rep->musicas.musicas[i+1];
+    }
+    rep->musicas.index--;
+    rep->musicas.musicas = (Musica*) realloc(rep->musicas.musicas, rep->musicas.index * sizeof(Musica));
 }
 
 int main()
