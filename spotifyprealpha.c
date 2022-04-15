@@ -85,12 +85,16 @@ int main() {
     Musica musica;
 
     do {
-        clear();
         int i;
+        op = 0;
+        subop = 0;
+        filtrarop = 0;
+        clear();
         for (i = 0; i < 6; i++) {
             printf("%s\n", menus[i]);
         }
         scanf("%d", &op);
+
         if (op >=1 && op <= 3) {
             clear();
             switch (op) {
