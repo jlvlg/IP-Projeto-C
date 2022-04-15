@@ -579,8 +579,8 @@ void exibir_album(int index, RepMusica *rep) {
     printf("Id: %d\n", album.id);
     printf("Titulo: %s\n", album.titulo);
     printf("Ano: %d\n", album.ano);
-    h = album.duracao % 3600;
-    m = (album.duracao - h * 3600) % 60;
+    h = album.duracao / 3600;
+    m = (album.duracao - h * 3600) / 60;
     s = album.duracao - h * 3600 - m * 60;
     printf("Duracao: %d:%d:%d\n", h, m, s);
     printf("Artista: %s\n", rep->artistas.artistas[buscar_artista(album.id_artista, rep)].nome);
@@ -593,8 +593,8 @@ void exibir_musica(int index, RepMusica *rep) {
     printf("Id: %d\n", musica.id);
     printf("Titulo: %s\n", musica.titulo);
     printf("Genero: %s\n", musica.genero);
-    h = musica.duracao % 3600;
-    m = (musica.duracao - h * 3600) % 60;
+    h = musica.duracao / 3600;
+    m = (musica.duracao - h * 3600) / 60;
     s = musica.duracao - h * 3600 - m * 60;
     printf("Duracao: %d:%d:%d\n", h, m, s);
     printf("Numero da faixa: %d\n", musica.faixa);
