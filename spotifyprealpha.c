@@ -73,7 +73,7 @@ void listar_musicas(int op, char *titulo, int id_artista, int id_album, char *ge
 int main() {
     int h, m, s;
     RepMusica repositorio = construtor_rep();
-    char menus[][25] = {"1. Gerenciar artistas", "2. Gerenciar albuns", "3. Gerenciar musicas", "4. Sair", "\nDigite a opcao: "};
+    char menus[][25] = {"Spotify pre-ALPHA (0.15a)", "1. Gerenciar artistas", "2. Gerenciar albuns", "3. Gerenciar musicas", "4. Sair", "\nDigite a opcao: "};
     char menuCrud[][25] = {"1. Cadastrar", "2. Buscar", "3. Listar", "4. Atualizar", "5. Remover", "6. Cancelar", "\nDigite a opcao: "};
     char menuFiltrarArtista[][25] = {"1. Mostrar todos", "2. Filtrar por nome", "3. Cancelar", "\nDigite a opcao: "};
     char menuFiltrarAlbum[][25] = {"1. Mostrar todos", "2. Filtrar por titulo", "3. Filtrar por ano", "4. Filtrar por artista", "5. Cancelar", "\nDigite a opcao: "};
@@ -87,12 +87,23 @@ int main() {
     do {
         clear();
         int i;
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < 6; i++) {
             printf("%s\n", menus[i]);
         }
         scanf("%d", &op);
-        if (op != 4) {
+        if (op >=1 && op <= 3) {
             clear();
+            switch (op) {
+                case 1:
+                    printf("Gerenciamento de artistas\n");
+                    break;
+                case 2:
+                    printf("Gerenciamento de albuns\n");
+                    break;
+                case 3:
+                    printf("Gerenciamento de musicas\n");
+                    break;
+            }
             for (i = 0; i < 7; i++) {
                 printf("%s\n", menuCrud[i]);
             }
