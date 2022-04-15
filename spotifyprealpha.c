@@ -73,11 +73,11 @@ void listar_musicas(int op, char *titulo, int id_artista, int id_album, char *ge
 int main() {
     int h, m, s;
     RepMusica repositorio = construtor_rep();
-    char menus[][25] = {"Spotify pre-ALPHA (0.15a)", "1. Gerenciar artistas", "2. Gerenciar albuns", "3. Gerenciar musicas", "4. Sair", "\nDigite a opcao: "};
-    char menuCrud[][25] = {"1. Cadastrar", "2. Buscar", "3. Listar", "4. Atualizar", "5. Remover", "6. Cancelar", "\nDigite a opcao: "};
-    char menuFiltrarArtista[][25] = {"1. Mostrar todos", "2. Filtrar por nome", "3. Cancelar", "\nDigite a opcao: "};
-    char menuFiltrarAlbum[][25] = {"1. Mostrar todos", "2. Filtrar por titulo", "3. Filtrar por ano", "4. Filtrar por artista", "5. Cancelar", "\nDigite a opcao: "};
-    char menuFiltrarMusica[][25] = {"1. Mostrar todos", "2. Filtrar por titulo", "3. Filtrar por artista", "4. Filtrar por album", "5. Filtrar por genero", "6. Cancelar", "\nDigite a opcao: "};
+    char menus[][40] = {"Spotify pre-ALPHA (0.15a)", "1. Gerenciar artistas", "2. Gerenciar albuns", "3. Gerenciar musicas", "4. Sair", "\nDigite a opcao: "};
+    char menuCrud[][40] = {"1. Cadastrar", "2. Buscar", "3. Listar", "4. Atualizar", "5. Remover", "6. Cancelar", "\nDigite a opcao: "};
+    char menuFiltrarArtista[][40] = {"1. Mostrar todos", "2. Filtrar por nome", "3. Cancelar", "\nDigite a opcao: "};
+    char menuFiltrarAlbum[][40] = {"1. Mostrar todos", "2. Filtrar por titulo", "3. Filtrar por ano", "4. Filtrar por artista", "5. Cancelar", "\nDigite a opcao: "};
+    char menuFiltrarMusica[][40] = {"1. Mostrar todos", "2. Filtrar por titulo", "3. Filtrar por artista", "4. Filtrar por album", "5. Filtrar por genero", "6. Cancelar", "\nDigite a opcao: "};
     int op, subop, filtrarop, id, index, ano, id_artista, id_album, faixa;
     char nome[50], titulo[100], genero[20];
     Artista artista;
@@ -653,7 +653,7 @@ void listar_albuns(int op, int id_artista, int ano, char *titulo, RepMusica *rep
 }
 
 void listar_musicas(int op, char *titulo, int id_artista, int id_album, char *genero, RepMusica *rep) {
-    int i;
+    int i, indexalbum = 0;
     printf("---Musicas---\n");
     for (i = 0; i < rep->musicas.index; i++) {
         switch (op) {
@@ -669,7 +669,7 @@ void listar_musicas(int op, char *titulo, int id_artista, int id_album, char *ge
                 break;
             case 3:
                 if (buscar_artista(id_artista, rep) != -1) {
-                    int indexalbum = buscar_album(rep->musicas.musicas[i].id_album, rep);
+                    indexalbum = buscar_album(rep->musicas.musicas[i].id_album, rep);
                     if (rep->albuns.albuns[indexalbum].id_artista == id_artista) {
                         exibir_musica(i, rep);
                         printf("--------------\n");
@@ -679,7 +679,7 @@ void listar_musicas(int op, char *titulo, int id_artista, int id_album, char *ge
                 }
                 break;
             case 4:
-                int indexalbum = buscar_album(id_album, rep);
+                indexalbum = buscar_album(id_album, rep);
                 if (indexalbum != -1) {
                     if (rep->musicas.musicas[i].id_album == id_album) {
                         exibir_musica(i, rep);
