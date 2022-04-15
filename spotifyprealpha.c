@@ -203,7 +203,7 @@ int main() {
                         break;
                     case 3:
                         clear();
-                        for (i = 0; i < 5; i++) {
+                        for (i = 0; i < 6; i++) {
                             printf("%s\n", menuFiltrarAlbum[i]);
                         }
                         scanf("%d", &filtrarop);
