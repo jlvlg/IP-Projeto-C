@@ -66,7 +66,7 @@ int remover_musica(int id, RepMusica *rep);
 void exibir_artista(int index, RepMusica *rep);
 void exibir_album(int index, RepMusica *rep);
 void exibir_musica(int index, RepMusica *rep);
-void listar_artistas(int op, char *nome, RepMusica *rep);
+int *listar_artistas(char *nome, RepMusica *rep);
 void listar_albuns(int op, int id_artista, int ano, char *titulo, RepMusica *rep);
 void listar_musicas(int op, char *titulo, int id_artista, int id_album, char *genero, RepMusica *rep);
 
@@ -79,6 +79,7 @@ int main() {
     char menuFiltrarAlbum[][40] = {"Listar albuns", "1. Mostrar todos", "2. Filtrar por titulo", "3. Filtrar por ano", "4. Filtrar por artista", "5. Cancelar", "\nDigite a opcao: "};
     char menuFiltrarMusica[][40] = {"Listar musicas", "1. Mostrar todos", "2. Filtrar por titulo", "3. Filtrar por artista", "4. Filtrar por album", "5. Filtrar por genero", "6. Cancelar", "\nDigite a opcao: "};
     int op, subop, filtrarop, id, index, ano, id_artista, id_album, faixa;
+    int *artistas, *albuns, *musicas;
     char nome[50], titulo[100], genero[20];
     Artista artista;
     Album album;
@@ -119,6 +120,8 @@ int main() {
             }
         }
         clear();
+        while (getchar() != '\n')
+            ;
         switch (op) {
             case 1:
                 switch (subop) {
@@ -136,6 +139,8 @@ int main() {
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         index = buscar_artista(id, &repositorio);
                         clear();
                         if (index != -1) {
@@ -153,29 +158,54 @@ int main() {
                             while ((getchar()) != '\n')
                                 ;
                         }
-                        switch (filtrarop) {
-                            case 1:
-                                listar_artistas(1, NULL, &repositorio);
-                                break;
-                            case 2:
-                                printf("Nome: ");
-                                scanf(" %[^\n]%*c", nome);
-                                listar_artistas(2, nome, &repositorio);
-                                break;
-                            case 3:
-                                continue;
-                            default:
-                                printf("Operacao invalida\n");
-                                break;
+                        while (getchar() != '\n')
+                            ;
+                        if (repositorio.artistas.index > 0) {
+                            switch (filtrarop) {
+                                case 1:
+                                    clear();
+                                    printf("---Artistas---\n");
+                                    for (i = 0; i < repositorio.artistas.index; i++) {
+                                        exibir_artista(i, &repositorio);
+                                        printf("--------------\n");
+                                    };
+                                    break;
+                                case 2:
+                                    printf("Nome: ");
+                                    scanf(" %[^\n]%*c", nome);
+                                    artistas = listar_artistas(nome, &repositorio);
+                                    clear();
+                                    if (artistas[0] != -1) {
+                                        printf("---Artistas---\n");
+                                        for (i = 0; artistas[i] != -1; i++) {
+                                            exibir_artista(i, &repositorio);
+                                            printf("--------------\n");
+                                        };
+                                    } else {
+                                        printf("Nenhum artista encontrado\n");
+                                    }
+                                    free(artistas);
+                                    break;
+                                case 3:
+                                    continue;
+                                default:
+                                    printf("Operacao invalida\n");
+                                    break;
+                            }
+                        } else {
+                            printf("Nao ha artistas cadastrados\n");
                         }
                         break;
                     case 4:
+                        printf("Alterar artista\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         index = buscar_artista(id, &repositorio);
                         if (index != -1) {
                             artista = repositorio.artistas.artistas[index];
@@ -187,12 +217,15 @@ int main() {
                         }
                         break;
                     case 5:
+                        printf("Remover artista\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         if (!remover_artista(id, &repositorio)) {
                             printf("Artista nao encontrado!\n");
                         }
@@ -207,6 +240,7 @@ int main() {
             case 2:
                 switch (subop) {
                     case 1:
+                        printf("Cadastrar album\n");
                         printf("Titulo: ");
                         scanf(" %[^\n]%*c", titulo);
                         printf("Ano: ");
@@ -215,23 +249,30 @@ int main() {
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         printf("Id do Artista: ");
                         while (scanf("%d", &id_artista) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         if (registrar_album(construtor_album(titulo, ano, id_artista), &repositorio) == -1) {
                             printf("Artista invalido\n");
                         }
                         break;
                     case 2:
+                    printf("Buscar album\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         index = buscar_album(id, &repositorio);
                         clear();
                         if (index != -1) {
@@ -249,8 +290,9 @@ int main() {
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         switch (filtrarop) {
-                            clear();
                             case 1:
                                 listar_albuns(1, 0, 0, NULL, &repositorio);
                                 break;
@@ -265,9 +307,9 @@ int main() {
                                     printf("Insira apenas um numero: ");
                                     while ((getchar()) != '\n')
                                         ;
-                                    system("pause");
-                                    continue;
                                 }
+                                while (getchar() != '\n')
+                                    ;
                                 listar_albuns(3, 0, ano, "", &repositorio);
                                 break;
                             case 4:
@@ -276,9 +318,9 @@ int main() {
                                     printf("Insira apenas um numero: ");
                                     while ((getchar()) != '\n')
                                         ;
-                                    system("pause");
-                                    continue;
                                 }
+                                while (getchar() != '\n')
+                                    ;
                                 listar_albuns(4, id_artista, 0, NULL, &repositorio);
                                 break;
                             case 5:
@@ -289,12 +331,15 @@ int main() {
                         }
                         break;
                     case 4:
+                    printf("Alterar album\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         index = buscar_album(id, &repositorio);
                         if (index != -1) {
                             album = repositorio.albuns.albuns[index];
@@ -305,29 +350,32 @@ int main() {
                                 printf("Insira apenas um numero: ");
                                 while ((getchar()) != '\n')
                                     ;
-                                system("pause");
-                                continue;
                             }
+                            while (getchar() != '\n')
+                                ;
                             printf("Id do Artista: ");
                             while (scanf("%d", &album.id_artista) != 1) {
                                 printf("Insira apenas um numero: ");
                                 while ((getchar()) != '\n')
                                     ;
-                                system("pause");
-                                continue;
                             }
+                            while (getchar() != '\n')
+                                ;
                             atualizar_album(album, &repositorio);
                         } else {
                             printf("Album nao encontrado!\n");
                         }
                         break;
                     case 5:
+                    printf("Remover album\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         if (!remover_album(id, &repositorio)) {
                             printf("Album nao encontrado!\n");
                         }
@@ -342,39 +390,49 @@ int main() {
             case 3:
                 switch (subop) {
                     case 1:
+                        printf("Cadastrar musica\n");
                         printf("Titulo: ");
                         scanf(" %[^\n]%*c", titulo);
                         printf("Genero: ");
                         scanf(" %[^\n]%*c", genero);
                         printf("Duracao (hh:mm:ss): ");
-                        while (scanf("%d", &h, &m, &s) != 3) {
+                        while (scanf("%d:%d:%d", &h, &m, &s) != 3) {
                             printf("Insira um horario em formato valido (hh:mm:ss): ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         printf("Numero da faixa: ");
                         while (scanf("%d", &faixa) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         printf("Id do Album: ");
                         while (scanf("%d", &id_album) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         if (registrar_musica(construtor_musica(titulo, genero, id_album, h * 60 * 60 + m * 60 + s, faixa), &repositorio) == -1) {
                             printf("Album invalido\n");
                         }
                         break;
                     case 2:
+                    printf("Buscar musica\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         index = buscar_musica(id, &repositorio);
                         clear();
                         if (index != -1) {
@@ -393,8 +451,9 @@ int main() {
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         switch (filtrarop) {
-                            clear();
                             case 1:
                                 listar_musicas(1, "", 0, 0, "", &repositorio);
                                 break;
@@ -409,9 +468,9 @@ int main() {
                                     printf("Insira apenas um numero: ");
                                     while ((getchar()) != '\n')
                                         ;
-                                    system("pause");
-                                    continue;
                                 }
+                                while (getchar() != '\n')
+                                    ;
                                 listar_musicas(3, "", id_artista, 0, "", &repositorio);
                                 break;
                             case 4:
@@ -420,9 +479,9 @@ int main() {
                                     printf("Insira apenas um numero: ");
                                     while ((getchar()) != '\n')
                                         ;
-                                    system("pause");
-                                    continue;
                                 }
+                                while (getchar() != '\n')
+                                    ;
                                 listar_musicas(4, "", 0, id_album, "", &repositorio);
                                 break;
                             case 5:
@@ -437,12 +496,15 @@ int main() {
                         }
                         break;
                     case 4:
+                    printf("Alterar musica\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         index = buscar_musica(id, &repositorio);
                         if (index != -1) {
                             musica = repositorio.musicas.musicas[index];
@@ -456,27 +518,32 @@ int main() {
                                 while ((getchar()) != '\n')
                                     ;
                             }
+                            while (getchar() != '\n')
+                                ;
                             musica.duracao = h * 60 * 60 + m * 60 + s;
                             printf("Numero da faixa: ");
                             while (scanf("%d", &musica.faixa) != 1) {
                                 printf("Insira apenas um numero: ");
                                 while ((getchar()) != '\n')
                                     ;
-                                system("pause");
-                                continue;
                             }
+                            while (getchar() != '\n')
+                                ;
                             atualizar_musica(musica, &repositorio);
                         } else {
                             printf("Album nao encontrado!\n");
                         }
                         break;
                     case 5:
+                    printf("Remover musica\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
                             while ((getchar()) != '\n')
                                 ;
                         }
+                        while (getchar() != '\n')
+                            ;
                         if (!remover_musica(id, &repositorio)) {
                             printf("Album nao encontrado!\n");
                         }
@@ -494,14 +561,20 @@ int main() {
                 printf("Opcao invalida!\n");
                 break;
         }
-        system("pause");
+        printf("Pressione ENTER para continuar...");
+        while (getchar() != '\n')
+            ;
     } while (op != 4);
 
     return 0;
 }
 
 void clear() {
-    system("cls||clear");
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
 }
 
 Artista construtor_artista(char *nome) {
@@ -727,40 +800,23 @@ void exibir_musica(int index, RepMusica *rep) {
     printf("Artista: %s\n", rep->artistas.artistas[buscar_album(album.id_artista, rep)].nome);
 }
 
-void listar_artistas(int op, char *nome, RepMusica *rep) {
-    int i, existe = 0;
-
-    clear();
-    if (rep->artistas.index == 0) {
-        printf("Nao ha artistas cadastrados\n");
-        return;
-    }
+int *listar_artistas(char *nome, RepMusica *rep) {
+    int i, counter = 0;
+    int *artistas;
+    artistas = (int *)malloc(0);
 
     for (i = 0; i < rep->artistas.index; i++) {
-        switch (op) {
-            case 1:
-                existe++;
-                if (existe == 1) {
-                    printf("---Artistas---\n");
-                }
-                exibir_artista(i, rep);
-                printf("--------------\n");
-                break;
-            case 2:
-                if (strstr(rep->artistas.artistas[i].nome, nome) != NULL) {
-                    existe++;
-                    if (existe == 1) {
-                        printf("---Artistas---\n");
-                    }
-                    exibir_artista(i, rep);
-                    printf("--------------\n");
-                }
-                break;
+        if (strstr(rep->artistas.artistas[i].nome, nome) != NULL) {
+            artistas = (int *)realloc(artistas, (counter + 1) * sizeof(int));
+            artistas[counter] = i;
+            counter++;
         }
     }
-    if (existe == 0) {
-        printf("Nenhum artista encontrado\n");
-    }
+
+    artistas = (int *)realloc(artistas, (counter + 1) * sizeof(int));
+    artistas[counter] = -1;
+
+    return artistas;
 }
 
 void listar_albuns(int op, int id_artista, int ano, char *titulo, RepMusica *rep) {
