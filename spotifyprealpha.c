@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef _WIN32 
-    #include <windows.h>
+#ifdef _WIN32
+#include <windows.h>
 #endif
 
 typedef struct
@@ -101,11 +101,11 @@ int main() {
     Album album;
     Musica musica;
 
-    #ifdef _WIN32
-        SetConsoleTitle("Spotify pre-ALPHA (0.15a)");
-    #else
-        printf("\033];Spotify pre-ALPHA (0.15a)\007");
-    #endif
+#ifdef _WIN32
+    SetConsoleTitle("Spotify pre-ALPHA (0.15a)");
+#else
+    printf("\033];Spotify pre-ALPHA (0.15a)\007");
+#endif
 
     do {
         int i;
@@ -709,25 +709,28 @@ Musica construtor_musica(char *titulo, char *genero, int id_album, int duracao, 
     return temp;
 }
 
+// Constrói e inicializa os valores iniciais de um repositório Artistas
 Artistas construtor_artistas() {
     Artistas temp;
-    temp.artistas = (Artista *) malloc(0);
+    temp.artistas = (Artista *)malloc(0);  // Para permitir realocamento dinâmico
     temp.index = 0;
     temp.next_id = 1;
     return temp;
 }
 
+// Constrói e inicializa os valores iniciais de um repositório Albuns
 Albuns construtor_albuns() {
     Albuns temp;
-    temp.albuns = (Album *) malloc(0);
+    temp.albuns = (Album *)malloc(0);  // Para permitir realocamento dinâmico
     temp.index = 0;
     temp.next_id = 1;
     return temp;
 }
 
+// Constrói e inicializa os valores iniciais de um repositório Musicas
 Musicas construtor_musicas() {
     Musicas temp;
-    temp.musicas = (Musica *) malloc(0);
+    temp.musicas = (Musica *)malloc(0);  // Para permitir realocamento dinâmico
     temp.index = 0;
     temp.next_id = 1;
     return temp;
@@ -939,16 +942,16 @@ void exibir_musica(int index, RepMusica *rep) {
     Musica musica = rep->musicas.musicas[index];                           // Coleta a música a ser exibida
     Album album = rep->albuns.albuns[buscar_album(musica.id_album, rep)];  // Coleta o album que contém a música
     Artista artista = rep->artistas.artistas[buscar_artista(album.id_artista, rep)];
-    printf("Id: %d\n", musica.id);                                         // Imprime o id da música
-    printf("Titulo: %s\n", musica.titulo);                                 // Imprime o título
-    printf("Genero: %s\n", musica.genero);                                 // Imprime o gênero
+    printf("Id: %d\n", musica.id);          // Imprime o id da música
+    printf("Titulo: %s\n", musica.titulo);  // Imprime o título
+    printf("Genero: %s\n", musica.genero);  // Imprime o gênero
     h = musica.duracao / 3600;
     m = (musica.duracao - h * 3600) / 60;
-    s = musica.duracao - h * 3600 - m * 60;                                                     // Faz o cálculo reverso de segundos para horas e minutos
-    printf("Duracao: %02d:%02d:%02d\n", h, m, s);                                               // Imprime a duração com no mínimo dois algarísmos
-    printf("Numero da faixa: %d\n", musica.faixa);                                              // Imprime o número da faixa
-    printf("Album: %s\n", album.titulo);                                                        // Imprime o título do álbum que contém a música
-    printf("Artista: %s\n", artista.nome);  // Imprime o nome do artista
+    s = musica.duracao - h * 3600 - m * 60;         // Faz o cálculo reverso de segundos para horas e minutos
+    printf("Duracao: %02d:%02d:%02d\n", h, m, s);   // Imprime a duração com no mínimo dois algarísmos
+    printf("Numero da faixa: %d\n", musica.faixa);  // Imprime o número da faixa
+    printf("Album: %s\n", album.titulo);            // Imprime o título do álbum que contém a música
+    printf("Artista: %s\n", artista.nome);          // Imprime o nome do artista
 }
 
 // Lista os índices dos artistas do repositório cujo nome contém a string nome fornecida
