@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32 
+    #include <windows.h>
+#endif
 
 typedef struct
 {
@@ -94,6 +97,12 @@ int main() {
     Artista artista;
     Album album;
     Musica musica;
+
+    #ifdef _WIN32
+        SetConsoleTitle("Spotify pre-ALPHA (0.15a)");
+    #else
+        printf("\033];Spotify pre-ALPHA (0.15a)\007");
+    #endif
 
     do {
         int i;
