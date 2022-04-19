@@ -432,7 +432,7 @@ int main() {
                         while (getchar() != '\n')
                             ;
                         // Impede que o usuário remova um álbum sem antes remover suas músicas
-                        if (listar_musicas_por_album(id, &repositorio)[0] != -1) {
+                        if (listar_musicas_por_album(id, &repositorio)[0] == -1) {
                             if (!remover_album(id, &repositorio)) {
                                 printf("Album nao encontrado!\n");
                             }
@@ -906,6 +906,7 @@ void exibir_musica(int index, RepMusica *rep) {
     int h, m, s;
     Musica musica = rep->musicas.musicas[index];                           // Coleta a música a ser exibida
     Album album = rep->albuns.albuns[buscar_album(musica.id_album, rep)];  // Coleta o album que contém a música
+    Artista artista = rep->artistas.artistas[buscar_artista(album.id_artista, rep)];
     printf("Id: %d\n", musica.id);                                         // Imprime o id da música
     printf("Titulo: %s\n", musica.titulo);                                 // Imprime o título
     printf("Genero: %s\n", musica.genero);                                 // Imprime o gênero
@@ -915,7 +916,7 @@ void exibir_musica(int index, RepMusica *rep) {
     printf("Duracao: %02d:%02d:%02d\n", h, m, s);                                               // Imprime a duração com no mínimo dois algarísmos
     printf("Numero da faixa: %d\n", musica.faixa);                                              // Imprime o número da faixa
     printf("Album: %s\n", album.titulo);                                                        // Imprime o título do álbum que contém a música
-    printf("Artista: %s\n", rep->artistas.artistas[buscar_album(album.id_artista, rep)].nome);  // Imprime o nome do artista
+    printf("Artista: %s\n", artista.nome);  // Imprime o nome do artista
 }
 
 // Lista os índices dos artistas do repositório cujo nome contém a string nome fornecida
@@ -1007,7 +1008,7 @@ int *listar_musicas_por_artista(int id_artista, RepMusica *rep) {
     int *albuns = listar_albuns_por_artista(id_artista, rep);  // Lista os álbuns pertencentes ao artista
     if (albuns[0] != -1) {                                     // resultado[0] == -1 indica que não foram encontrados dados correspondentes
         for (i = 0; i < rep->musicas.index; i++) {             // Loop nas músicas do repositório
-            for (int j = 0; albuns[j] != -1; i++) {            // Loop nos álbuns encontrados
+            for (int j = 0; albuns[j] != -1; j++) {            // Loop nos álbuns encontrados
                 if (rep->musicas.musicas[i].id_album == rep->albuns.albuns[j].id) {
                     // Checa se música pertence ao álbum, se sim ela também pertence ao artista, já que o álbum pertence ao artista
                     musicas = (int *)realloc(musicas, (counter + 1) * sizeof(int));  // Realoca
