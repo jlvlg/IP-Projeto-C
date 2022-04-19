@@ -66,14 +66,14 @@ int remover_musica(int id, RepMusica *rep);
 void exibir_artista(int index, RepMusica *rep);
 void exibir_album(int index, RepMusica *rep);
 void exibir_musica(int index, RepMusica *rep);
-int* listar_artistas_por_nome(char *nome, RepMusica *rep);
-int* listar_albuns_por_artista(int id_artista, RepMusica *rep);
-int* listar_albuns_por_ano(int ano, RepMusica *rep);
-int* listar_albuns_por_titulo(char *titulo, RepMusica *rep);
-int* listar_musicas_por_artista(int id_artista, RepMusica *rep);
-int* listar_musicas_por_titulo(char *titulo, RepMusica *rep);
-int* listar_musicas_por_album(int id_album, RepMusica *rep);
-int* listar_musicas_por_genero(char *genero, RepMusica *rep);
+int *listar_artistas_por_nome(char *nome, RepMusica *rep);
+int *listar_albuns_por_artista(int id_artista, RepMusica *rep);
+int *listar_albuns_por_ano(int ano, RepMusica *rep);
+int *listar_albuns_por_titulo(char *titulo, RepMusica *rep);
+int *listar_musicas_por_artista(int id_artista, RepMusica *rep);
+int *listar_musicas_por_titulo(char *titulo, RepMusica *rep);
+int *listar_musicas_por_album(int id_album, RepMusica *rep);
+int *listar_musicas_por_genero(char *genero, RepMusica *rep);
 
 int main() {
     int h, m, s;
@@ -151,15 +151,14 @@ int main() {
                         if (index != -1) {
                             exibir_artista(index, &repositorio);
                             albuns = listar_albuns_por_artista(id, &repositorio);
-                            if (albuns[0] != -1)
-                            {
+                            if (albuns[0] != -1) {
                                 printf("---Albuns---\n");
                                 for (i = 0; albuns[i] != -1; i++) {
                                     album = repositorio.albuns.albuns[albuns[i]];
-                                    printf("%d - %s(%d)\n", album.id, album.titulo, album.ano);
-                                    printf("------------\n");
-                            };
-                            free(albuns);
+                                    printf("%d - %s (%d)\n", album.id, album.titulo, album.ano);
+                                };
+                                printf("------------\n");
+                                free(albuns);
                             }
                         } else {
                             printf("Artista nao encontrado!\n");
@@ -176,7 +175,7 @@ int main() {
                                     ;
                             }
                             while (getchar() != '\n')
-                            ;
+                                ;
                             switch (filtrarop) {
                                 case 1:
                                     clear();
@@ -194,7 +193,7 @@ int main() {
                                     if (artistas[0] != -1) {
                                         printf("---Artistas---\n");
                                         for (i = 0; artistas[i] != -1; i++) {
-                                            exibir_artista(i, &repositorio);
+                                            exibir_artista(artistas[i], &repositorio);
                                             printf("--------------\n");
                                         };
                                     } else {
@@ -225,7 +224,7 @@ int main() {
                         index = buscar_artista(id, &repositorio);
                         if (index != -1) {
                             artista = repositorio.artistas.artistas[index];
-                            printf("Nome: ");
+                            printf("Novo nome: ");
                             scanf(" %[^\n]%*c", artista.nome);
                             atualizar_artista(artista, &repositorio);
                         } else {
@@ -242,14 +241,14 @@ int main() {
                         }
                         while (getchar() != '\n')
                             ;
-                        if(listar_albuns_por_artista(id, &repositorio)[0] == -1){
+                        if (listar_albuns_por_artista(id, &repositorio)[0] == -1) {
                             if (!remover_artista(id, &repositorio)) {
                                 printf("Artista nao encontrado!\n");
                             }
                         } else {
                             printf("Nao e possivel remover artistas com albuns cadastrados!\n");
                         }
-                        
+
                         break;
                     case 6:
                         continue;
@@ -285,7 +284,7 @@ int main() {
                         }
                         break;
                     case 2:
-                    printf("Buscar album\n");
+                        printf("Buscar album\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
@@ -298,14 +297,14 @@ int main() {
                         clear();
                         if (index != -1) {
                             exibir_album(index, &repositorio);
-                            musicas = listar_musicas_por_album("---Musicas---", &repositorio);
+                            musicas = listar_musicas_por_album(repositorio.albuns.albuns[index].id, &repositorio);
                             if (musicas[0] != -1) {
                                 printf("---Musicas---\n");
                                 for (i = 0; musicas[i] != -1; i++) {
                                     musica = repositorio.musicas.musicas[musicas[i]];
                                     printf("%d - %s\n", musica.faixa, musica.titulo);
-                                    printf("-----------\n");
                                 };
+                                printf("-----------\n");
                             }
                             free(musicas);
                         } else {
@@ -313,7 +312,7 @@ int main() {
                         }
                         break;
                     case 3:
-                        if(repositorio.albuns.index > 0){
+                        if (repositorio.albuns.index > 0) {
                             for (i = 0; i < 7; i++) {
                                 printf("%s\n", menuFiltrarAlbum[i]);
                             }
@@ -336,7 +335,7 @@ int main() {
                                 case 2:
                                     printf("Titulo: ");
                                     scanf(" %[^\n]%*c", titulo);
-                                    albuns = listar_albuns_por_titulo(&titulo, &repositorio);
+                                    albuns = listar_albuns_por_titulo(titulo, &repositorio);
                                     break;
                                 case 3:
                                     printf("Ano: ");
@@ -358,7 +357,7 @@ int main() {
                                     }
                                     while (getchar() != '\n')
                                         ;
-                                    albuns = listar_albuns_por_ano(id_artista, &repositorio);
+                                    albuns = listar_albuns_por_artista(id_artista, &repositorio);
                                     break;
                                 case 5:
                                     continue;
@@ -366,12 +365,12 @@ int main() {
                                     printf("Opcao invalida!\n");
                                     break;
                             }
-                            if(filtrarop >= 2 && filtrarop <= 4){
+                            if (filtrarop >= 2 && filtrarop <= 4) {
                                 clear();
                                 if (albuns[0] != -1) {
                                     printf("---Albuns---\n");
                                     for (i = 0; albuns[i] != -1; i++) {
-                                        exibir_album(i, &repositorio);
+                                        exibir_album(albuns[i], &repositorio);
                                         printf("------------\n");
                                     };
                                 } else {
@@ -384,7 +383,7 @@ int main() {
                         }
                         break;
                     case 4:
-                    printf("Alterar album\n");
+                        printf("Alterar album\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
@@ -396,18 +395,10 @@ int main() {
                         index = buscar_album(id, &repositorio);
                         if (index != -1) {
                             album = repositorio.albuns.albuns[index];
-                            printf("Titulo: ");
+                            printf("Novo titulo: ");
                             scanf(" %[^\n]%*c", album.titulo);
-                            printf("Ano: ");
+                            printf("Novo ano: ");
                             while (scanf("%d", &album.ano) != 1) {
-                                printf("Insira apenas um numero: ");
-                                while ((getchar()) != '\n')
-                                    ;
-                            }
-                            while (getchar() != '\n')
-                                ;
-                            printf("Id do Artista: ");
-                            while (scanf("%d", &album.id_artista) != 1) {
                                 printf("Insira apenas um numero: ");
                                 while ((getchar()) != '\n')
                                     ;
@@ -420,7 +411,7 @@ int main() {
                         }
                         break;
                     case 5:
-                    printf("Remover album\n");
+                        printf("Remover album\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
@@ -429,7 +420,7 @@ int main() {
                         }
                         while (getchar() != '\n')
                             ;
-                        if(listar_musicas_por_album(id, &repositorio)[0] != -1){
+                        if (listar_musicas_por_album(id, &repositorio)[0] != -1) {
                             if (!remover_album(id, &repositorio)) {
                                 printf("Album nao encontrado!\n");
                             }
@@ -481,7 +472,7 @@ int main() {
                         }
                         break;
                     case 2:
-                    printf("Buscar musica\n");
+                        printf("Buscar musica\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
@@ -494,13 +485,13 @@ int main() {
                         clear();
                         if (index != -1) {
                             exibir_musica(index, &repositorio);
-                            repositorio.artistas.artistas[buscar_artista(album.id_artista, &repositorio)].ouvintes++;
+                            repositorio.artistas.artistas[buscar_artista(repositorio.albuns.albuns[buscar_album(repositorio.musicas.musicas[index].id_album, &repositorio)].id_artista, &repositorio)].ouvintes++;
                         } else {
-                            printf("Album nao encontrado!\n");
+                            printf("Musica nao encontrado!\n");
                         }
                         break;
                     case 3:
-                    if (repositorio.musicas.index > 0) {
+                        if (repositorio.musicas.index > 0) {
                             for (i = 0; i < 8; i++) {
                                 printf("%s\n", menuFiltrarMusica[i]);
                             }
@@ -553,29 +544,29 @@ int main() {
                                     musicas = listar_musicas_por_genero(genero, &repositorio);
                                     break;
                                 case 6:
-                                    break;
+                                    continue;
                                 default:
                                     break;
                             }
-                            if(filtrarop >= 2 && filtrarop <= 5){
+                            if (filtrarop >= 2 && filtrarop <= 5) {
                                 clear();
                                 if (musicas[0] != -1) {
                                     printf("---Musicas---\n");
                                     for (i = 0; musicas[i] != -1; i++) {
-                                        exibir_musica(i, &repositorio);
+                                        exibir_musica(musicas[i], &repositorio);
                                         printf("-----------\n");
-                                        };
+                                    };
                                 } else {
                                     printf("Nenhuma musica encontrada\n");
                                 }
-                                free(albuns);
+                                free(musicas);
                             }
                         } else {
                             printf("Nao ha musicas cadastradas\n");
                         }
                         break;
                     case 4:
-                    printf("Alterar musica\n");
+                        printf("Alterar musica\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
@@ -587,11 +578,11 @@ int main() {
                         index = buscar_musica(id, &repositorio);
                         if (index != -1) {
                             musica = repositorio.musicas.musicas[index];
-                            printf("Titulo: ");
+                            printf("Novo titulo: ");
                             scanf(" %[^\n]%*c", musica.titulo);
-                            printf("Genero: ");
+                            printf("Novo genero: ");
                             scanf(" %[^\n]%*c", musica.genero);
-                            printf("Duracao (hh:mm:ss): ");
+                            printf("Nova duracao (hh:mm:ss): ");
                             while (scanf("%d:%d:%d", &h, &m, &s) != 3) {
                                 printf("Insira um horario em formato valido (hh:mm:ss): ");
                                 while ((getchar()) != '\n')
@@ -600,7 +591,7 @@ int main() {
                             while (getchar() != '\n')
                                 ;
                             musica.duracao = h * 60 * 60 + m * 60 + s;
-                            printf("Numero da faixa: ");
+                            printf("Novo numero da faixa: ");
                             while (scanf("%d", &musica.faixa) != 1) {
                                 printf("Insira apenas um numero: ");
                                 while ((getchar()) != '\n')
@@ -610,11 +601,11 @@ int main() {
                                 ;
                             atualizar_musica(musica, &repositorio);
                         } else {
-                            printf("Album nao encontrado!\n");
+                            printf("Musica nao encontrada!\n");
                         }
                         break;
                     case 5:
-                    printf("Remover musica\n");
+                        printf("Remover musica\n");
                         printf("Id: ");
                         while (scanf("%d", &id) != 1) {
                             printf("Insira apenas um numero: ");
@@ -624,7 +615,7 @@ int main() {
                         while (getchar() != '\n')
                             ;
                         if (!remover_musica(id, &repositorio)) {
-                            printf("Album nao encontrado!\n");
+                            printf("Musica nao encontrada!\n");
                         }
                         break;
                     case 6:
@@ -649,11 +640,11 @@ int main() {
 }
 
 void clear() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
 Artista construtor_artista(char *nome) {
@@ -859,7 +850,7 @@ void exibir_album(int index, RepMusica *rep) {
     h = album.duracao / 3600;
     m = (album.duracao - h * 3600) / 60;
     s = album.duracao - h * 3600 - m * 60;
-    printf("Duracao: %d:%d:%d\n", h, m, s);
+    printf("Duracao: %02d:%02d:%02d\n", h, m, s);
     printf("Artista: %s\n", rep->artistas.artistas[buscar_artista(album.id_artista, rep)].nome);
 }
 
@@ -873,13 +864,13 @@ void exibir_musica(int index, RepMusica *rep) {
     h = musica.duracao / 3600;
     m = (musica.duracao - h * 3600) / 60;
     s = musica.duracao - h * 3600 - m * 60;
-    printf("Duracao: %d:%d:%d\n", h, m, s);
+    printf("Duracao: %02d:%02d:%02d\n", h, m, s);
     printf("Numero da faixa: %d\n", musica.faixa);
     printf("Album: %s\n", album.titulo);
     printf("Artista: %s\n", rep->artistas.artistas[buscar_album(album.id_artista, rep)].nome);
 }
 
-int* listar_artistas_por_nome(char *nome, RepMusica *rep) {
+int *listar_artistas_por_nome(char *nome, RepMusica *rep) {
     int i, counter = 0;
     int *artistas;
     artistas = (int *)malloc(1);
@@ -898,7 +889,7 @@ int* listar_artistas_por_nome(char *nome, RepMusica *rep) {
     return artistas;
 }
 
-int* listar_albuns_por_artista(int id_artista, RepMusica *rep){
+int *listar_albuns_por_artista(int id_artista, RepMusica *rep) {
     int i, counter = 0;
     int *albuns;
     albuns = (int *)malloc(1);
@@ -917,7 +908,7 @@ int* listar_albuns_por_artista(int id_artista, RepMusica *rep){
     return albuns;
 }
 
-int* listar_albuns_por_ano(int ano, RepMusica *rep){
+int *listar_albuns_por_ano(int ano, RepMusica *rep) {
     int i, counter = 0;
     int *albuns;
     albuns = (int *)malloc(1);
@@ -936,10 +927,10 @@ int* listar_albuns_por_ano(int ano, RepMusica *rep){
     return albuns;
 }
 
-int* listar_albuns_por_titulo(char *titulo, RepMusica *rep) {
+int *listar_albuns_por_titulo(char *titulo, RepMusica *rep) {
     int i, counter = 0;
     int *albuns;
-    albuns = (int *) malloc(1);
+    albuns = (int *)malloc(1);
 
     for (i = 0; i < rep->albuns.index; i++) {
         if (strstr(rep->albuns.albuns[i].titulo, titulo) != NULL) {
@@ -955,15 +946,14 @@ int* listar_albuns_por_titulo(char *titulo, RepMusica *rep) {
     return albuns;
 }
 
-int* listar_musicas_por_artista(int id_artista, RepMusica *rep){
+int *listar_musicas_por_artista(int id_artista, RepMusica *rep) {
     int i, j, counter = 0;
     int *musicas;
     musicas = (int *)malloc(1);
     int *albuns = listar_albuns_por_artista(id_artista, rep);
-    if(albuns[0] != -1){
+    if (albuns[0] != -1) {
         for (i = 0; i < rep->musicas.index; i++) {
-            for (int j = 0; albuns[j] != -1; i++)
-            {
+            for (int j = 0; albuns[j] != -1; i++) {
                 if (rep->musicas.musicas[i].id_album == rep->albuns.albuns[j].id) {
                     musicas = (int *)realloc(musicas, (counter + 1) * sizeof(int));
                     musicas[counter] = i;
@@ -971,7 +961,6 @@ int* listar_musicas_por_artista(int id_artista, RepMusica *rep){
                     break;
                 }
             }
-            
         }
     }
     musicas = (int *)realloc(musicas, (counter + 1) * sizeof(int));
@@ -980,7 +969,7 @@ int* listar_musicas_por_artista(int id_artista, RepMusica *rep){
     return musicas;
 }
 
-int* listar_musicas_por_titulo(char *titulo, RepMusica *rep) {
+int *listar_musicas_por_titulo(char *titulo, RepMusica *rep) {
     int i, counter = 0;
     int *musicas;
     musicas = (int *)malloc(1);
@@ -999,7 +988,7 @@ int* listar_musicas_por_titulo(char *titulo, RepMusica *rep) {
     return musicas;
 }
 
-int* listar_musicas_por_album(int id_album, RepMusica *rep){
+int *listar_musicas_por_album(int id_album, RepMusica *rep) {
     int i, counter = 0;
     int *musicas;
     musicas = (int *)malloc(1);
@@ -1018,7 +1007,7 @@ int* listar_musicas_por_album(int id_album, RepMusica *rep){
     return musicas;
 }
 
-int* listar_musicas_por_genero(char *genero, RepMusica *rep) {
+int *listar_musicas_por_genero(char *genero, RepMusica *rep) {
     int i, counter = 0;
     int *musicas;
     musicas = (int *)malloc(1);
