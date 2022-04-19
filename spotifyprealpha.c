@@ -53,6 +53,9 @@ void clear();
 Artista construtor_artista(char *nome);
 Album construtor_album(char *titulo, int ano, int id_artista);
 Musica construtor_musica(char *titulo, char *genero, int id_album, int duracao, int faixa);
+Artistas construtor_artistas();
+Albuns construtor_albuns();
+Musicas construtor_musicas();
 RepMusica construtor_rep();
 void registrar_artista(Artista artista, RepMusica *rep);
 int registrar_album(Album album, RepMusica *rep);
@@ -706,18 +709,38 @@ Musica construtor_musica(char *titulo, char *genero, int id_album, int duracao, 
     return temp;
 }
 
+Artistas construtor_artistas() {
+    Artistas temp;
+    temp.artistas = (Artista *) malloc(0);
+    temp.index = 0;
+    temp.next_id = 1;
+    return temp;
+}
+
+Albuns construtor_albuns() {
+    Albuns temp;
+    temp.albuns = (Album *) malloc(0);
+    temp.index = 0;
+    temp.next_id = 1;
+    return temp;
+}
+
+Musicas construtor_musicas() {
+    Musicas temp;
+    temp.musicas = (Musica *) malloc(0);
+    temp.index = 0;
+    temp.next_id = 1;
+    return temp;
+}
+
 // Inicializa um repositório geral e o retorna
 RepMusica construtor_rep() {
     RepMusica temp;
 
-    // Aloca 0 espaços de memória para as listas de structs presente nesse repositório
-    temp.artistas.artistas = (Artista *)malloc(0);
-    temp.albuns.albuns = (Album *)malloc(0);
-    temp.musicas.musicas = (Musica *)malloc(0);
-
-    // Inicializa os valores dos índices e ids dos próximo struct a ser cadastrado com 0 e 1, respectivamente
-    temp.artistas.index = temp.albuns.index = temp.musicas.index = 0;
-    temp.artistas.next_id = temp.albuns.next_id = temp.musicas.next_id = 1;
+    // Constroi os repositórios internos: artistas, albuns e musicas
+    temp.artistas = construtor_artistas();
+    temp.albuns = construtor_albuns();
+    temp.musicas = construtor_musicas();
 
     return temp;
 }
