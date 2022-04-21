@@ -1,3 +1,12 @@
+/*
+    Spotify pre-ALPHA (0.15a) - Sistema fictício de gerenciamento de músicas.
+    Descrição: Projeto apresentado ao curso de Bacharelado em Ciência da Computação da Universidade
+               Federal do Agreste de Pernambuco para a obtenção parcial da nota da primeira
+               avaliação de aprendizagem da disciplina de Introduão a programação.
+    Orientador: Dr. Luís Filipe Alves Pereira.
+    Autoria de Davy Eugênio Nere de Oliveira e José Lucas Vinícius Lopes Gama.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
