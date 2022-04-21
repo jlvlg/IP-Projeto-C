@@ -260,14 +260,10 @@ int main() {
                         }
                         while (getchar() != '\n')
                             ;
-                        // Impede que o usuário remova um artista se ele contém álbuns
-                        if (listar_albuns_por_artista(id, &repositorio)[0] == -1) {
-                            // remover_{struct} retorna 0 caso não exista {struct} com esse id no repositório
-                            if (!remover_artista(id, &repositorio)) {
-                                printf("Artista nao encontrado!\n");
-                            }
-                        } else {
-                            printf("Nao e possivel remover artistas com albuns cadastrados!\n");
+
+                        // remover_{struct} retorna 0 caso não exista {struct} com esse id no repositório
+                        if (!remover_artista(id, &repositorio)) {
+                            printf("Artista nao encontrado!\n");
                         }
 
                         break;
@@ -443,13 +439,9 @@ int main() {
                         }
                         while (getchar() != '\n')
                             ;
-                        // Impede que o usuário remova um álbum sem antes remover suas músicas
-                        if (listar_musicas_por_album(id, &repositorio)[0] == -1) {
-                            if (!remover_album(id, &repositorio)) {
-                                printf("Album nao encontrado!\n");
-                            }
-                        } else {
-                            printf("Nao e possivel remover albuns com musicas cadastradas!\n");
+
+                        if (!remover_album(id, &repositorio)) {
+                            printf("Album nao encontrado!\n");
                         }
                         break;
                     case 6:
@@ -872,29 +864,49 @@ int atualizar_musica(Musica musica, RepMusica *rep) {
 
 // Remove o artista com o id recebido e retorna se houve êxito na operação
 int remover_artista(int id, RepMusica *rep) {
-    int i, index = buscar_artista(id, rep);
+    int i, *albuns, index = buscar_artista(id, rep);
     if (index == -1) {
         return 0;
     }
+
+    // Remover álbuns do artista
+    albuns = listar_albuns_por_artista(id, rep);
+    for (i = 0; albuns[i] != -1; i++) {
+        remover_album(rep->albuns.albuns[albuns[i]].id, rep);
+    }
+
     for (i = index; i < rep->artistas.index - 1; i++) {             // Começa o laço de repetição com o índice do artista com o id recebido
         rep->artistas.artistas[i] = rep->artistas.artistas[i + 1];  // Recua todos os artistas em uma posição a partir do índice do artista com o id recebido
     }
     rep->artistas.index--;                                                                                       // Diminui em 1 o índice do próximo artista cadastrado
     rep->artistas.artistas = (Artista *)realloc(rep->artistas.artistas, rep->artistas.index * sizeof(Artista));  // Realoca o tamanho da lista de artistas com base no atual número de artistas
+
+    free(albuns);
+
     return 1;
 }
 
 // Remove o álbum com o id recebido e retorna se houve êxito na operação
 int remover_album(int id, RepMusica *rep) {
-    int i, index = buscar_album(id, rep);
+    int i, *musicas, index = buscar_album(id, rep);
     if (index == -1) {
         return 0;
     }
+
+    // Remove as músicas do álbum
+    musicas = listar_musicas_por_album(id, rep);
+    for (i = 0; musicas[i] != -1; i++) {
+        remover_musica(rep->musicas.musicas[musicas[i]].id, rep);
+    }
+
     for (i = index; i < rep->albuns.index - 1; i++) {
         rep->albuns.albuns[i] = rep->albuns.albuns[i + 1];
     }
     rep->albuns.index--;
     rep->albuns.albuns = (Album *)realloc(rep->albuns.albuns, rep->albuns.index * sizeof(Album));
+
+    free(musicas);
+
     return 1;
 }
 
